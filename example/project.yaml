@@ -1,0 +1,38 @@
+# If you use Windows, or these tools are not in your $PATH, please provide the full path of them
+tools:
+  apktool: apktool
+  jarsigner: jarsigner
+  7z: 7z
+
+# Only 3.5.3 version of official package is tested
+original:
+  # Please get the Chinese version of Android package from https://arcaea.cn
+  android: arcaea_3.5.3c.apk
+  # Please get the iOS package on a jailbroken iDevice with CrackerXI+ and AppStore++
+  ios: Arc-mobile_3.5.3_CrackerXI.ipa
+
+version: "1.0.0"
+androidPackage:
+  versionCode: 100000
+  # Please refer to articles about Android package signing for creating and use keystore
+  signing:
+    keystore: /path/to/your/android.keystore
+    storepass: "111111"
+    alias: keystore_alias
+
+name: MyArcaea
+packageId: moe.my.arc
+
+# Enter a invalid URL like localhost to disable networking
+server: https://arcapi.example.com/latte/13/
+
+# If empty the icon will NOT be replaced
+icon: icon.png
+
+# Song packs of each category (free, story, sidestory and collab)
+packs:
+  free:
+    - pack1
+# Add more packs here
+  # collab:
+  #   - pack2

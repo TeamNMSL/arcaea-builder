@@ -1,0 +1,47 @@
+# The song metadata
+
+# The song's display name in the game.
+title_localized:
+  # Possible keys are "en", "ja", "zh-Hans" and "zh-Hant".
+  en: The example song
+
+# The song's display artist in the game.
+artist: No artist
+
+# The song's display BPM in the game.
+bpm: '150'
+
+# The song's play BPM.
+bpm_base: 150
+
+# The preview part of the audio in the song selection UI. (Unit: ms)
+audioPreview: 0
+audioPreviewEnd: 1000
+
+# The theme of the play UI. 0 for light and 1 for dark.
+side: 0
+
+# Enter the background's name here if you want to use an official playing background.
+# Otherwise put a bg.jpg according to README.md.
+bg: base_light
+
+# The game version of the song. Used when filtered by version in the song selection UI.
+version: '1.0'
+
+# The chart's metadata for each difficulty.
+difficulties:
+    # 0 = PST, 1 = PRS, 2 = FTR and 3 = BYD.
+  - ratingClass: 2
+    # The display chart designer in the game.
+    chartDesigner: nobody.chart(this);
+    # The display cover image designer in the game. (optional)
+    jacketDesigner: ''
+    # The background image for this difficulty. (optional)
+    # If not exist default the game will use the background image of the song (see "bg" above)
+    # To use custom background, omit this field and put a bg_2.jpg (2 is the "ratingClass") in this directory.
+    bg: base_light
+    # The display rating in the game.
+    # Must be X or X+ (X is an integer) format.
+    rating: 10+
+    # The chart constant in the server.
+    constant: 10.7

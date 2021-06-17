@@ -1,0 +1,11 @@
+# The display name of the pack in game
+name: My Pack 1
+
+# If true, the pack's ID will be the original directory name (e.g. "pack1")
+# If false (or unset), the pack's ID will be pack_{pack directory name} (e.g. "pack_pack1")
+# You should set it to true for the "single" pack
+packNoPrefix: false
+
+# If true, the pack's songs' IDs will be the original directory names (e.g. "song1")
+# If false (or unset), the songs' IDs will be {pack directory name}_{song directory name}  (e.g. "pack1_song1")
+songNoPrefix: false
