@@ -39,7 +39,14 @@ export default async (args: string[]) => {
     delete songInfo["songlist_hidden"];
     for (const d of songInfo.difficulties) {
       delete d["hidden_until_unlocke"];
+      delete d["jacketOverride"];
       d.constant = constants[d.ratingClass];
+
+      if (d.rating === 0) d.rating = "?";
+      if (d.ratingPlus) {
+        delete d.ratingPlus;
+        d.rating = String(d.rating) + "+";
+      }
     }
 
     const outFile = path.join(songsDir, song, "song.yaml");
