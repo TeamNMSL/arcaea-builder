@@ -137,7 +137,7 @@ export const action: Action = {
             if (difficulty.rating !== 0) {
               const { constant } = difficulty;
               const constantInteger = constant * 10;
-              if (constantInteger <= 0 || !Number.isSafeInteger(constantInteger)) {
+              if (constantInteger < 0 || !Number.isSafeInteger(constantInteger)) {
                 logger.error(`Invalid constant ${constant} for song ${songId}'s diffuculty ${difficulty.ratingClass}`);
               } else {
                 ratings[difficulty.ratingClass] = constantInteger;
