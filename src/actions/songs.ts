@@ -48,6 +48,9 @@ export const action: Action = {
       const outSongs: ArcSongMeta[] = [];
       const locked: [string, number][] = [];
 
+      if (await fs.pathExists(path.join(projectPacksDir, "single")))
+        packs.push("single");
+
       for (const pack of packs) {
         const packDir = path.join(projectPacksDir, pack);
         const packInfo = yaml.load(fs.readFileSync(path.join(packDir, "pack.yaml"), "utf-8")) as PackMeta;
