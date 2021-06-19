@@ -125,6 +125,8 @@ export const action: Action = {
                 difficulty.rating = difficulty.rating.slice(0, -1);
               }
 
+              if (difficulty.rating === "?") difficulty.rating = "0";
+
               const x = Number(difficulty.rating);
               if (!Number.isSafeInteger(x) || String(x) !== difficulty.rating)
                 logger.fatal(`Invalid rating ${difficulty.rating} for difficulty ${difficulty.ratingClass}`);
