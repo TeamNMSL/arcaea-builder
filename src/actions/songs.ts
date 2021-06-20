@@ -8,6 +8,28 @@ import { Action } from "@/action";
 import { ArcPackMeta, ArcSongMeta, PackMeta } from "@/lib/interfaces";
 import * as database from "@/lib/songDatabase";
 
+function validateSongMeta(id: string, song: ArcSongMeta) {
+  if (typeof song.title_localized !== "object") logger.fatal(`Song ${id}'s title_localized must be an object`);
+  Object.keys(song.title_localized).forEach(k => {
+    if (!["en", "ja", "zh-Hans", "zh-Hant"].includes(k))
+      logger.error(`Invalid language in song ${id}'s title: ${k}`);
+  })
+  if (typeof song.artist !== "string") logger.fatal(`Song ${id}'s artist must be a string`);
+  if (typeof song.bpm !== "string") logger.fatal(`Song ${id}'s bpm must be a string (display BPM)`);
+  if (!Number.isFinite(song.bpm_base)) logger.fatal(`Song ${id}'s bpm_base must be a number (in-game BPM)`);
+  if (!Number.isSafeInteger(song.audioPreview)) logger.fatal(`Song ${id}'s audioPreview must be an integer`);
+  if (!Number.isSafeInteger(song.audioPreviewEnd)) logger.fatal(`Song ${id}'s audioPreview must be an integer`);
+  if (![0, 1].includes(song.side)) logger.fatal(`Song ${id}'s side must be 0 or 1`);
+  if (!Array.isArray(song.difficulties)) logger.fatal(`Song ${id}'s difficulties must be an Array`);
+  for (const d of song.difficulties) {
+    if (![0, 1, 2, 3].includes(d.ratingClass)) logger.fatal(`Song ${id}'s difficulty's ratingClass must be 0, 1, 2 or 3`);
+    if (typeof d.chartDesigner !== "string") logger.fatal(`Song ${id}'s difficulty's chartDesigner must be a string`);
+    if (typeof d.jacketDesigner !== "string") logger.fatal(`Song ${id}'s difficulty's jacketDesigner must be a string`);
+  }
+  if (song.difficulties.length > new Set(song.difficulties.map(d => d.ratingClass)).size)
+    logger.fatal(`Song ${id}'s difficulty's ratingClass must be 0, 1, 2 or 3`);
+}
+
 export const action: Action = {
   dependencies: [],
   action: async () => {
@@ -85,6 +107,11 @@ export const action: Action = {
           const songDir = path.join(packDir, song);
           const songInfo = yaml.load(fs.readFileSync(path.join(songDir, "song.yaml"), "utf-8")) as ArcSongMeta;
           const songId = songNoPrefix ? song : `${pack}_${song}`;
+
+          validateSongMeta(songId, songInfo);
+
+          if (!await fs.pathExists(path.join(songDir, "base.jpg"))) logger.fatal(`Missing base.jpg (cover image) for song ${songId}`);
+          if (!await fs.pathExists(path.join(songDir, "base.ogg"))) logger.fatal(`Missing base.ogg (music) for song ${songId}`);
 
           songInfo.id = songId;
           songInfo.set = id;

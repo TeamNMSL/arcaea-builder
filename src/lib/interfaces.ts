@@ -39,6 +39,7 @@ export interface ArcSongMeta {
     en: string;
     ja?: string;
     "zh-Hans"?: string;
+    "zh-Hant"?: string;
   };
   artist: string;
   bpm: string;
