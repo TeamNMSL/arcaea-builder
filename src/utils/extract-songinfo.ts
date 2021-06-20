@@ -38,7 +38,7 @@ export default async (args: string[]) => {
     delete songInfo["remote_dl"];
     delete songInfo["songlist_hidden"];
     for (const d of songInfo.difficulties) {
-      delete d["hidden_until_unlocke"];
+      delete d["hidden_until_unlocked"];
       delete d["jacketOverride"];
       d.constant = constants[d.ratingClass];
 
