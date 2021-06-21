@@ -138,7 +138,7 @@ async function patchAndroidMetadata(packageDir: string) {
 export const action: Action = {
   dependencies: ["unpack", "icon", "songs", "binary"],
   action: async (args: string[]) => {
-    const allTargets = ["android", "ios"];
+    const allTargets = Object.keys(projectConfig.targets);
     const targets = args.length === 0 ? allTargets : args;
     for (const target of targets)
       if (!allTargets.includes(target))

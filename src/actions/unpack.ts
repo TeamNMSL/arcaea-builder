@@ -13,44 +13,51 @@ async function deleteExtraSongs(assetsDir: string) {
 export const action: Action = {
   dependencies: [],
   action: async () => {
-    const androidOriginalPackage = path.join(projectOriginalDir, projectConfig.original.android);
-    const iOSOriginalPackage = path.join(projectOriginalDir, projectConfig.original.ios);
+    if (projectConfig.targets.android) {
+      const androidOriginalPackage = path.join(projectOriginalDir, projectConfig.targets.android);
+      const androidOriginalPackageDir = path.join(projectOriginalDir, "package");
 
-    logger.info("Removing old unpacked files");
+      logger.info("Removing old Android unpacked files");
+      await fs.remove(androidOriginalPackageDir);
 
-    const androidOriginalPackageDir = path.join(projectOriginalDir, "package");
-    const iOSOriginalPackageDir = path.join(projectOriginalDir, "Payload");
-    await Promise.all([fs.remove(androidOriginalPackageDir), fs.remove(iOSOriginalPackageDir)]);
+      logger.info("Unpacking Android original package");
+      exec("apktool", [
+        "d",
+        androidOriginalPackage,
+        "-o",
+        androidOriginalPackageDir
+      ]);
+  
+      const extra64BitBinaryDir = path.join(androidOriginalPackageDir, "lib", "arm64-v8a");
+      logger.info("Removing extra 64 bit binaries from Android unpacked files");
+      await fs.remove(extra64BitBinaryDir);
+  
+      logger.info("Removing ALL songs (except for tutorial) from Android unpack files")
+      await deleteExtraSongs(path.join(androidOriginalPackageDir, "assets"));  
+    }
 
-    logger.info("Unpacking Android original package");
-    exec("apktool", [
-      "d",
-      androidOriginalPackage,
-      "-o",
-      androidOriginalPackageDir
-    ]);
+    if (projectConfig.targets.ios) {
+      const iOSOriginalPackage = path.join(projectOriginalDir, projectConfig.targets.ios);
+      const iOSOriginalPackageDir = path.join(projectOriginalDir, "Payload");
 
-    const extra64BitBinaryDir = path.join(androidOriginalPackageDir, "lib", "arm64-v8a");
-    logger.info("Removing extra 64 bit binaries from Android unpacked files");
-    await fs.remove(extra64BitBinaryDir);
-
-    logger.info("Removing ALL songs (except for tutorial) from Android unpack files")
-    await deleteExtraSongs(path.join(androidOriginalPackageDir, "assets"));
-
-    logger.info("Unpacking iOS original package");
-    exec("7z", [
-      "x",
-      iOSOriginalPackage,
-      "-o" + projectOriginalDir
-    ]);
-
-    const unpackediOSAppDir = path.join(iOSOriginalPackageDir, "Arc-mobile.app");
-    const extraFiles = ["Assets.car", "CrackerXI", "PlugIns"];
-    logger.info("Removing extra files from iOS unpacked files");
-    await Promise.all(extraFiles.map(file => fs.remove(path.join(unpackediOSAppDir, file))));
-
-    logger.info("Removing ALL songs (except for tutorial) from iOS unpack files")
-    await deleteExtraSongs(unpackediOSAppDir);
+      logger.info("Removing old iOS unpacked files");
+      await fs.remove(iOSOriginalPackageDir);
+  
+      logger.info("Unpacking iOS original package");
+      exec("7z", [
+        "x",
+        iOSOriginalPackage,
+        "-o" + projectOriginalDir
+      ]);
+  
+      const unpackediOSAppDir = path.join(iOSOriginalPackageDir, "Arc-mobile.app");
+      const extraFiles = ["Assets.car", "CrackerXI", "PlugIns"];
+      logger.info("Removing extra files from iOS unpacked files");
+      await Promise.all(extraFiles.map(file => fs.remove(path.join(unpackediOSAppDir, file))));
+  
+      logger.info("Removing ALL songs (except for tutorial) from iOS unpack files")
+      await deleteExtraSongs(unpackediOSAppDir);
+    }
 
     return true;
   }

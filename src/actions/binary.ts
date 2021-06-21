@@ -87,8 +87,10 @@ export const action: Action = {
       await fs.writeFile(binaryPath, binary);
     }
 
-    await runPatch("android", path.join(projectOriginalDir, "package/lib/armeabi-v7a/libcocos2dcpp.so"));
-    await runPatch("ios", path.join(projectOriginalDir, "Payload/Arc-mobile.app/Arc-mobile"));
+    if (projectConfig.targets.android)
+      await runPatch("android", path.join(projectOriginalDir, "package/lib/armeabi-v7a/libcocos2dcpp.so"));
+    if (projectConfig.targets.ios)
+      await runPatch("ios", path.join(projectOriginalDir, "Payload/Arc-mobile.app/Arc-mobile"));
 
     return true;
   }

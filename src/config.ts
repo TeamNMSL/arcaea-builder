@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 import yaml from "js-yaml";
 
@@ -8,9 +8,9 @@ export interface ProjectConfig {
     jarsigner: string;
     "7z": string;
   };
-  original: {
-    android: string;
-    ios: string;
+  targets: {
+    android?: string;
+    ios?: string;
   };
   version: string;
   androidPackage: {
@@ -49,4 +49,7 @@ export function loadConfig(projectDir: string) {
   global["projectOriginalDir"] = path.join(projectDir, "original");
   global["projectConfig"] = yaml.load(fs.readFileSync(path.join(projectDir, "project.yaml"), "utf-8"));
   global["binaryPatchConfig"] = yaml.load(fs.readFileSync(path.join(projectDir, "binary.yaml"), "utf-8"));
+
+  const projectDistDir = path.join(projectDir, "dist");
+  fs.ensureDirSync(projectDistDir);
 }

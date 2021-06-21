@@ -5,7 +5,7 @@ tools:
   7z: 7z
 
 # Only 3.5.3 version of official package is tested
-original:
+targets:
   # Please get the Chinese version of Android package from https://arcaea.cn
   android: arcaea_3.5.3c.apk
   # Please get the iOS package on a jailbroken iDevice with CrackerXI+ and AppStore++
