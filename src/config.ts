@@ -52,4 +52,18 @@ export function loadConfig(projectDir: string) {
 
   const projectDistDir = path.join(projectDir, "dist");
   fs.ensureDirSync(projectDistDir);
+
+  // Validate project config
+  
+  if (!projectConfig.targets || Object.keys(projectConfig.targets).some(k => !["android", "ios"].includes(k)))
+    logger.fatal('The targets could only contain "android" and "ios".');
+  
+  if (typeof projectConfig.packageId !== "string" || projectConfig.packageId.split(".").length !== 3)
+    logger.fatal('The package ID should be in the "aaa.bbb.ccc" format.');
+
+  if (!projectConfig.packs || Object.keys(projectConfig.packs).some(k => !["free", "story", "sidestory", "collab"].includes(k)))
+    logger.fatal('The packs category could only contain "free", "story", "sidestory" and "collab".');
+
+  if (Object.values(projectConfig.packs).flat().length === 0)
+    logger.fatal('The packs could not be empty.');
 }
