@@ -68,7 +68,7 @@ export const action: Action = {
       const packId: Record<string, string> = {};
       const outPacks: ArcPackMeta[] = [];
       const outSongs: ArcSongMeta[] = [];
-      const locked: [string, number][] = [];
+      const unlocks: [string, number, object][] = [];
 
       if (await fs.pathExists(path.join(projectPacksDir, "single")))
         packs.push("single");
@@ -174,8 +174,10 @@ export const action: Action = {
             }
       
             if (nonExistDifficulies.includes(difficulty.ratingClass)) {
-              locked.push([songId, difficulty.ratingClass]);
+              unlocks.push([songId, difficulty.ratingClass, [{ type: 5, rating: 114514 }]]);
             } else {
+              if (difficulty.unlock)
+                unlocks.push([songId, difficulty.ratingClass, difficulty.unlock]);
               if (!await fs.pathExists(path.join(songDir, `${difficulty.ratingClass}.aff`)))
                 logger.error(`Difficulty ${difficulty.ratingClass} defined in metadata but the chart file doesn't exist.`);
             }
@@ -193,16 +195,10 @@ export const action: Action = {
         }
       }
 
-      const outUnlocks = locked.map(([id, d]) => ({
+      const outUnlocks = unlocks.map(([id, d, c]) => ({
         songId: id,
         ratingClass: d,
-        conditions: [
-          {
-
-            type: 5,
-            rating: 114514
-          }
-        ]
+        conditions: c
       }));
 
       return [outSongs, outPacks, outUnlocks] as const;

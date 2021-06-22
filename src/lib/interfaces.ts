@@ -28,6 +28,7 @@ export interface ArcSongDifficultyMeta {
   constant?: number;
   ratingPlus?: boolean;
   bg?: string;
+  unlock?: object;
 }
 
 export interface ArcSongMeta {
