@@ -3,125 +3,154 @@
 targets:
   android:
     # Server address
-    0089C89A: EVAL `ASCIIZ ${projectConfig.server}`
+    - 0x0089C89A: EVAL `ASCIIZ ${projectConfig.server}`
     # Font fix -- replace references to Chinese font with Japanese font
     # And replace Japanese font with full Chinese font
-    008A078D: ASCIIZ Fonts/Kazesawa-Regular.ttf
-    008A612D: ASCIIZ Fonts/Kazesawa-Light.ttf
+    - 0x008A078D: ASCIIZ Fonts/Kazesawa-Regular.ttf
+    - 0x008A612D: ASCIIZ Fonts/Kazesawa-Light.ttf
+    # Force single pack's songs' backgrounds to be normal
+    - 0x0089BBBF: ASCIIZ img/bg_light.jpg
+    - 0x0089BBD7: ASCIIZ img/bg_dark.jpg
     # Metadata check
-    00564EDE: HEX 00 BF # songlist
-    00564EEE: HEX 00 BF # packlist
-    00564EFE: HEX 00 BF # unlocks
+    - 0x00564EDE: HEX 00 BF # songlist
+    - 0x00564EEE: HEX 00 BF # packlist
+    - 0x00564EFE: HEX 00 BF # unlocks
     # Highspeed limitation
-    0049694A: HEX FF          # HighspeedSettingLayer::init(): max speed 65 => 255
-    00496FB4: HEX 00 BF 00 BF # UserPreferences::getHighspeedInt(): remove max speed limitation
+    - 0x0049694A: HEX FF          # HighspeedSettingLayer::init(): max speed 65 => 255
+    - 0x00496FB4: HEX 00 BF 00 BF # UserPreferences::getHighspeedInt(): remove max speed limitation
     # Tempestissimo unlock state check
     # Without this patch removing the Tempestissimo song causes the game crash
-    004B982C: HEX 4F F0 01 04 4F F0 01 04 01 24 # SongSelectScene::init()
+    - 0x004B982C: HEX 4F F0 01 04 4F F0 01 04 01 24 # SongSelectScene::init()
     # Bundled Beyond difficulty support
-    004BC6E1: HEX E0    # SongSelectScene::getRequiredAssetsAndTokenForStartGameScene():
-                        # remove force download check of Beyond charts (remove download prompt before play)
-    005352BF: HEX E0    # SongManager::loadSongs()
-                        # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
-    00540CA8: HEX 00 BF # Song::getChartFilepathForDifficultyClass()
-                        # remove force find chart file under download directory for Beyond charts
-    0057A013: HEX E0    # SongSelectionCell::setSelected()
-                        # remove force download check of Beyond charts (download button to START button)
+    - 0x004BC6E1: HEX E0    # SongSelectScene::getRequiredAssetsAndTokenForStartGameScene():
+                          # remove force download check of Beyond charts (remove download prompt before play)
+    - 0x005352BF: HEX E0    # SongManager::loadSongs()
+                          # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
+    - 0x00540CA8: HEX 00 BF # Song::getChartFilepathForDifficultyClass()
+                          # remove force find chart file under download directory for Beyond charts
+    - 0x0057A013: HEX E0    # SongSelectionCell::setSelected()
+                          # remove force download check of Beyond charts (download button to START button)
     # April Fool's Day's feature for all charts
-    00516C72: HEX 00 BF       # LogicChart::setupNotesFromParsed(): enable camera
-    00516D26: HEX 11 E0       # LogicChart::setupNotesFromParsed(): enable scenecontrol
-    00516B38: HEX 4F F0 01 00 # LogicChart::setupNotesFromParsed(): fix green arc() with mirror
-    00518458: HEX 05 E0       # LogicChart::colorForId(): enable green arc()
-    00518472: HEX 00 BF       # LogicChart::colorForId(): fix green arc() with mirror
+    - 0x00516C72: HEX 00 BF       # LogicChart::setupNotesFromParsed(): enable camera
+    - 0x00516D26: HEX 11 E0       # LogicChart::setupNotesFromParsed(): enable scenecontrol
+    - 0x00516B38: HEX 4F F0 01 00 # LogicChart::setupNotesFromParsed(): fix green arc() with mirror
+    - 0x00518458: HEX 05 E0       # LogicChart::colorForId(): enable green arc()
+    - 0x00518472: HEX 00 BF       # LogicChart::colorForId(): fix green arc() with mirror
     # Assume everything to be purchased
-    004979F8: HEX 01 # PurchaseManager::isPurchased(): return 1 on not purchased
+    - 0x00497974: HEX 34 E0 # PurchaseManager::isPurchased(): jump to return
+    - 0x004979F8: HEX 01    # PurchaseManager::isPurchased(): return 1 on not purchased
     # Assume ALL stories to be unlocked
-    0048AFE0: HEX 00 BF 00 BF 19 E0 # StoryEntry::isUnlocked(): jump to return
-    0048B01A: HEX 01                # StoryEntry::isUnlocked(): return 1
+    - 0x0048AFE0: HEX 00 BF 00 BF 19 E0 # StoryEntry::isUnlocked(): jump to return
+    - 0x0048B01A: HEX 01                # StoryEntry::isUnlocked(): return 1
     # Assume no unread stories on main menu scene
-    00471AB5: HEX E0 # StoryManager::hasUnreadUnlockedStory(): jump to return 0
+    - 0x00471AB5: HEX E0 # StoryManager::hasUnreadUnlockedStory(): jump to return 0
     # Remove limitations limitations for character abilities
-    0049A62C: HEX 4F F0 00 00 # CharacterAbility::setLimitations
+    - 0x0049A62C: HEX 4F F0 00 00 # CharacterAbility::setLimitations
     # Pack dividers
     # - Divider positions
-    #   - 00484B8C: MOV R0, (X = a divider's index's invert)
-    #               The condition is (i & X == 0), aka (i == 0 || i == ~X)
-    00484B8C: EVAL `UINT 8 LE ${0xFF & ~packDivider.index("story")}`
-    00484B8D: HEX 20
+    #   - 00484B8C: MOV R0, 0
+    #   - 00484B90: CMP R1, R0
+    - 0x00484B8C: HEX 00 20
+    - 0x00484B90: HEX 81 42
+    #   - 0048572A: B.W 004979B8 (jump to the instruction below)
+    #   - 004979B8: CMP R1, (X = a divider's index)
+    #   - 004979BA: IT EQ
+    #   - 004979BC: B.W 00484B9A (jump to create divider)
+    #   - 004979C0: B.W 00484CC6 (jump to skip create divider, the original jump target of 0048572A)
+    - 0x0048572A: HEX 12 F0 45 B9
+    - 0x004979B8: EVAL `UINT 8 LE ${packDivider.index("story")}`
+    - 0x004979B9: HEX 29
+    - 0x004979BA: HEX 08 BF
+    - 0x004979BC: HEX ED F7 ED B8
+    - 0x004979C0: HEX ED F7 81 B9
     #   - 00485724: CMP R1, (X = a divider's index)
-    00485724: EVAL `UINT 8 LE ${packDivider.index("sidestory")}`
+    - 0x00485724: EVAL `UINT 8 LE ${packDivider.index("sidestory")}`
     #   - 00484B94: CMPNE R1, (X = a divider's index)
-    00484B94: EVAL `UINT 8 LE ${packDivider.index("collab")}`
+    - 0x00484B94: EVAL `UINT 8 LE ${packDivider.index("collab")}`
     # - Start of "story"
-    00484BCC: EVAL `UINT 8 LE ${packDivider.index("story")}`
+    - 0x00484BCC: EVAL `UINT 8 LE ${packDivider.index("story")}`
     # - Start of "sidestory"
-    00484BEC: EVAL `UINT 8 LE ${packDivider.index("sidestory")}`
+    - 0x00484BEC: EVAL `UINT 8 LE ${packDivider.index("sidestory")}`
     # - Start of "collab"
-    00484C0C: EVAL `UINT 8 LE ${packDivider.index("collab")}`
+    - 0x00484C0C: EVAL `UINT 8 LE ${packDivider.index("collab")}`
+    # Always trigger anomalies
+    - 0x0054DEB0: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::insertOrUpdateChallengeUnlock()
+    - 0x0054E0F8: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::insertOrUpdateChallengeUnlock()
+    - 0x0054DED4: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
+    - 0x0054E020: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
   ios:
     # Server address
-    007F7649: EVAL `ASCIIZ ${projectConfig.server}`
+    - 0x007F7649: EVAL `ASCIIZ ${projectConfig.server}`
     # Font fix -- replace references to Chinese font with Japanese font
     # And replace Japanese font with full Chinese font
-    007F4090: ASCIIZ Fonts/Kazesawa-Regular.ttf
-    007FDCED: ASCIIZ Fonts/Kazesawa-Light.ttf
+    - 0x007F4090: ASCIIZ Fonts/Kazesawa-Regular.ttf
+    - 0x007FDCED: ASCIIZ Fonts/Kazesawa-Light.ttf
+    # Force single pack's songs' backgrounds to be normal
+    - 0x008088AD: ASCIIZ img/bg_light.jpg
+    - 0x008088C5: ASCIIZ img/bg_dark.jpg
     # Metadata check
-    0006B970: HEX 1F 20 03 D5 # songlist
-    0006B9B8: HEX 1F 20 03 D5 # packlist
-    0006BA00: HEX 1F 20 03 D5 # unlocks
+    - 0x0006B970: HEX 1F 20 03 D5 # songlist
+    - 0x0006B9B8: HEX 1F 20 03 D5 # packlist
+    - 0x0006BA00: HEX 1F 20 03 D5 # unlocks
     # Highspeed limitation
-    0006FE50: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in HighspeedSettingLayer::init()
-    0006FE61: HEX FD 03
-    00144CAC: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in SettingsDialog::updateUI()
-    00144CBD: HEX FD 03
-    001F9BA0: HEX EB 1F # Inlined UserPreferences::getHighspeedInt()
-    001F9BB0: HEX FD 03
-    0023929C: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in SongManager::loadLogicChartForSong()
-    002392AD: HEX FD 03
-    0023CF64: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in AchievementManager::processAchievementsSongComplete()
-    0023CF75: HEX FD 03
+    - 0x0006FE50: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in HighspeedSettingLayer::init()
+    - 0x0006FE61: HEX FD 03
+    - 0x00144CAC: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in SettingsDialog::updateUI()
+    - 0x00144CBD: HEX FD 03
+    - 0x001F9BA0: HEX EB 1F # Inlined UserPreferences::getHighspeedInt()
+    - 0x001F9BB0: HEX FD 03
+    - 0x0023929C: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in SongManager::loadLogicChartForSong()
+    - 0x002392AD: HEX FD 03
+    - 0x0023CF64: HEX EB 1F # Inlined UserPreferences::getHighspeedInt() in AchievementManager::processAchievementsSongComplete()
+    - 0x0023CF75: HEX FD 03
     # Tempestissimo unlock state check
     # Without this patch removing the Tempestissimo song causes the game crash
-    0022191C: HEX 1F 20 03 D5 1F 20 03 D5 35 00 80 D2 # SongSelectScene::init()
+    - 0x0022191C: HEX 1F 20 03 D5 1F 20 03 D5 35 00 80 D2 # SongSelectScene::init()
     # Bundled Beyond difficulty support
-    00226D78: HEX 05 00 00 14 # SongSelectScene::getRequiredAssetsAndTokenForStartGameScene():
-                              # remove force download check of Beyond charts (remove download prompt before play)
-    002353BC: HEX 19 00 00 14 # SongManager::loadSongs()
-                              # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
-    000B6120: HEX 44 08 5F 7A # Song::getChartFilepathForDifficultyClass()
-                              # remove force find chart file under download directory for Beyond charts
-    001F7220: HEX 05 00 00 14 # SongSelectionCell::setSelected()
-                              # remove force download check of Beyond charts (download button to START button)
+    - 0x00226D78: HEX 05 00 00 14 # SongSelectScene::getRequiredAssetsAndTokenForStartGameScene():
+                                # remove force download check of Beyond charts (remove download prompt before play)
+    - 0x002353BC: HEX 19 00 00 14 # SongManager::loadSongs()
+                                # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
+    - 0x000B6120: HEX 44 08 5F 7A # Song::getChartFilepathForDifficultyClass()
+                                # remove force find chart file under download directory for Beyond charts
+    - 0x001F7220: HEX 05 00 00 14 # SongSelectionCell::setSelected()
+                                # remove force download check of Beyond charts (download button to START button)
     # April Fool's Day's feature for all charts
-    000DB5B4: HEX 1F 20 03 D5 # LogicChart::setupNotesFromParsed(): enable camera
-    000DB654: HEX C0 00 00 14 # LogicChart::setupNotesFromParsed(): enable scenecontrol
-    000DB464: HEX 1F 20 03 D5 # LogicChart::setupNotesFromParsed(): fix green arc() with mirror
-    000DE044: HEX 05 00 00 14 # LogicChart::colorForId(): enable green arc()
-    000DE068: HEX 1F 20 03 D5 # LogicChart::colorForId(): fix green arc() with mirror
+    - 0x000DB5B4: HEX 1F 20 03 D5 # LogicChart::setupNotesFromParsed(): enable camera
+    - 0x000DB654: HEX C0 00 00 14 # LogicChart::setupNotesFromParsed(): enable scenecontrol
+    - 0x000DB464: HEX 1F 20 03 D5 # LogicChart::setupNotesFromParsed(): fix green arc() with mirror
+    - 0x000DE044: HEX 05 00 00 14 # LogicChart::colorForId(): enable green arc()
+    - 0x000DE068: HEX 1F 20 03 D5 # LogicChart::colorForId(): fix green arc() with mirror
     # Assume everything to be purchased
-    0021CA60: HEX 20 # PurchaseManager::isPurchased(): return 1 on not purchased
+    - 0x0021CA60: HEX 20 # PurchaseManager::isPurchased(): return 1 on not purchased
     # Assume ALL stories to be unlocked
-    0005C3D8: HEX 1F 20 03 D5 18 00 00 14 # StoryEntry::isUnlocked(): jump to return
-    0005C43C: HEX 33 00 80 52             # StoryEntry::isUnlocked(): return 1
+    - 0x0005C3D8: HEX 1F 20 03 D5 18 00 00 14 # StoryEntry::isUnlocked(): jump to return
+    - 0x0005C43C: HEX 33 00 80 52             # StoryEntry::isUnlocked(): return 1
     # Assume no unread stories on main menu scene
-    0000BA9C: HEX 19 00 00 14 # StoryManager::hasUnreadUnlockedStory(): jump to return 0
+    - 0x0000BA9C: HEX 19 00 00 14 # StoryManager::hasUnreadUnlockedStory(): jump to return 0
     # Remove limitations limitations for character abilities
-    0013F824: HEX 1F 20 03 D5 # CharacterAbility::setLimitations
+    - 0x0013F824: HEX 1F 20 03 D5 # CharacterAbility::setLimitations
     # Pack dividers
     # - Divider positions
-    #   - 0014B9E0: MOV R0, (X = a divider's index's invert)
-    #               The condition is (i & X == 0), aka (i == 0 || i == ~X)
-    0014B9E0: EVAL `UINT 32 LE ${0x52800008 | ((~packDivider.index("story") & 0xFFFF) << 5)}`
+    #   - 0014B9E8: CCMP W26, (X = 0), #4, AL
+    - 0x0014B9E8: EVAL `UINT 32 LE ${0x7A40EB44 | ((0 & 0b11111) << 16)}`
+    #   - 0014B9EC: CCMP W26, (X = a divider's index), #4, NE
+    - 0x0014B9EC: EVAL `UINT 32 LE ${0x7A401B44 | ((packDivider.index("story") & 0b11111) << 16)}`
     #   - 0014B9F4: CCMP W26, (X = a divider's index), #4, NE
-    0014B9F4: EVAL `UINT 32 LE ${0x7A401B44 | ((packDivider.index("sidestory") & 0b11111) << 16)}`
+    - 0x0014B9F4: EVAL `UINT 32 LE ${0x7A401B44 | ((packDivider.index("sidestory") & 0b11111) << 16)}`
     #   - 0014B9F0: CCMP W26, (X = a divider's index), #4, NE
-    0014B9F0: EVAL `UINT 32 LE ${0x7A401B44 | ((packDivider.index("collab") & 0b11111) << 16)}`
+    - 0x0014B9F0: EVAL `UINT 32 LE ${0x7A401B44 | ((packDivider.index("collab") & 0b11111) << 16)}`
     # - Start of "story"
     #   - 0014BA50: CCMP W26, (X = "story" divider's index), #4, AL
-    0014BA50: EVAL `UINT 32 LE ${0x7A40EB44 | ((packDivider.index("story") & 0b11111) << 16)}`
+    - 0x0014BA50: EVAL `UINT 32 LE ${0x7A40EB44 | ((packDivider.index("story") & 0b11111) << 16)}`
     # - Start of "sidestory"
     #   - 0014BA8C: CCMP W26, (X = "sidestory" divider's index), #4, AL
-    0014BA8C: EVAL `UINT 32 LE ${0x7A40EB44 | ((packDivider.index("sidestory") & 0b11111) << 16)}`
+    - 0x0014BA8C: EVAL `UINT 32 LE ${0x7A40EB44 | ((packDivider.index("sidestory") & 0b11111) << 16)}`
     # - Start of "collab"
     #   - 0014BAC8: CCMP W26, (X = "collab" divider's index), #4, AL
-    0014BAC8: EVAL `UINT 32 LE ${0x7A40EB44 | ((packDivider.index("collab") & 0b11111) << 16)}`
+    - 0x0014BAC8: EVAL `UINT 32 LE ${0x7A40EB44 | ((packDivider.index("collab") & 0b11111) << 16)}`
+    # Always trigger anomalies
+    - 0x000FA8CC: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::insertOrUpdateChallengeUnlock()
+    - 0x000FAC6C: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::insertOrUpdateChallengeUnlock()
+    - 0x000FA8F8: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
+    - 0x000FAA1C: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()

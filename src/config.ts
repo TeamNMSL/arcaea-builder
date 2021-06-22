@@ -35,8 +35,8 @@ export interface ProjectConfig {
 
 export interface BinaryPatchConfig {
   targets: {
-    android: Record<string, string>;
-    ios: Record<string, string>;
+    android: Record<string, string>[];
+    ios: Record<string, string>[];
   }
 }
 

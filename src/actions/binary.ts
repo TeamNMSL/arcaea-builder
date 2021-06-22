@@ -61,7 +61,7 @@ function resolvePatchData(buffer: Buffer, address: number, expression: string) {
 
 function doPatch(buffer: Buffer, address: number, expression: string) {
   const data = resolvePatchData(buffer, address, expression);
-  logger.info(`Data expression at 0x${address.toString(16)} ${JSON.stringify(expression)} resolved to ${data.toString("hex")}`);
+  logger.info(`Data expression at 0x${address.toString(16).padStart(8, "0")} ${JSON.stringify(expression)} resolved to ${data.toString("hex")}`);
   data.copy(buffer, address);
 }
 
@@ -75,10 +75,10 @@ export const action: Action = {
       
       const patchList = binaryPatchConfig.targets[target];
       
-      for (const hexAddress in patchList) {
-        const address = parseInt(hexAddress, 16);
-        const expression = patchList[hexAddress];
-        doPatch(binary, address, expression);
+      for (const patchObject of patchList) {
+        const address = Object.keys(patchObject)[0];
+        const expression = Object.values(patchObject)[0];
+        doPatch(binary, Number(address), expression);
       }
       
       const binaryDirectory = path.join(projectDistDir, "binary");
