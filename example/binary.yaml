@@ -8,6 +8,7 @@ targets:
     # And replace Japanese font with full Chinese font
     - 0x008A078D: ASCIIZ Fonts/Kazesawa-Regular.ttf
     - 0x008A612D: ASCIIZ Fonts/Kazesawa-Light.ttf
+    - 0x008A614B: ASCIIZ Fonts/Kazesawa-Semibold.ttf
     # Force single pack's songs' backgrounds to be normal
     - 0x0089BBBF: ASCIIZ img/bg_light.jpg
     - 0x0089BBD7: ASCIIZ img/bg_dark.jpg
@@ -85,6 +86,7 @@ targets:
     # And replace Japanese font with full Chinese font
     - 0x007F4090: ASCIIZ Fonts/Kazesawa-Regular.ttf
     - 0x007FDCED: ASCIIZ Fonts/Kazesawa-Light.ttf
+    - 0x007FDD0B: ASCIIZ Fonts/Kazesawa-Semibold.ttf
     # Force single pack's songs' backgrounds to be normal
     - 0x008088AD: ASCIIZ img/bg_light.jpg
     - 0x008088C5: ASCIIZ img/bg_dark.jpg
