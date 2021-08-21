@@ -12,4 +12,4 @@ const args = process.argv.slice(2);
 if (args.length === 0)
   logger.fatal("Please specify action with argv");
 
-runAction(args[0], args.slice(1));
+runAction(args[0], args.slice(1)).then(() => process.exit(0));

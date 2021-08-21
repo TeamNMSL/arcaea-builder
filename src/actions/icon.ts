@@ -1,9 +1,10 @@
-import puppeteer from "puppeteer";
 import fs from "fs-extra";
 import path from "path";
 import sharp from "sharp";
 
 import type { Action } from "@/action";
+import { createBrowserContext } from "@/lib/browser";
+import { createDataUriForImage } from "@/lib/utils";
 
 export const action: Action = {
   dependencies: [],
@@ -18,7 +19,7 @@ export const action: Action = {
 
     const sourceFileBuffer = fs.readFileSync(sourceFile);
     const sourceImage = sharp(sourceFileBuffer);
-    const sourceImageURL = "data:image/png;base64," + (await sourceImage.png().toBuffer()).toString("base64");
+    const sourceImageURL = await createDataUriForImage(sourceFileBuffer);
 
     const distDir = path.join(projectDistDir, "icon");
     fs.ensureDirSync(distDir);
@@ -29,8 +30,6 @@ export const action: Action = {
 
       const distAndroidDir = path.join(distDir, "android");
       fs.mkdirSync(distAndroidDir);
-
-      const browser = await puppeteer.launch();
 
       const androidPresets: [string, number, number, number][] = [
         ["xxxhdpi", 192, 20, 8],
@@ -43,8 +42,8 @@ export const action: Action = {
       await Promise.all(androidPresets.map(async ([name, size, padding, radius]) => {
         logger.info(`Making Android icon: [${name}, ${size}, ${padding}, ${radius}]`);
 
-        const page = await browser.newPage();
-        await page.evaluate((sourceUrl: string, size: number, padding: number, radius: number) => {
+        const context = await createBrowserContext();
+        await context.evaluate((sourceUrl: string, size: number, padding: number, radius: number) => {
           document.body.style.margin = "0";
           document.body.style.padding = `${padding}`;
           document.body.style.width = `${size}px`;
@@ -61,7 +60,7 @@ export const action: Action = {
           document.body.appendChild(img);
         }, sourceImageURL, size, padding, radius);
 
-        const image = await page.screenshot({
+        const image = await context.screenshot({
           omitBackground: true,
           clip: {
             x: 0, y: 0, width: size, height: size
@@ -73,8 +72,6 @@ export const action: Action = {
         await sourceImage.resize(size, size).png().toFile(`${dir}/ic_launcher_adaptive.png`);
         await fs.writeFile(`${dir}/ic_launcher.png`, image);
       }));
-
-      await browser.close();
     }
 
     if (projectConfig.targets.ios) {

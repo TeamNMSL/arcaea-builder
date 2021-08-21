@@ -1,5 +1,11 @@
 # The song metadata
 
+# See README in this directory for `from` property.
+# from: <some official song ID>
+
+# See README in project root for `filters` property.
+# filters: []
+
 # The song's display name in the game.
 title_localized:
   # Possible keys are "en", "ja", "zh-Hans" and "zh-Hant".
@@ -15,6 +21,7 @@ bpm: '150'
 bpm_base: 150
 
 # The preview part of the audio in the song selection UI. (Unit: ms)
+# If `remote_dl` is set, the preview audio file will be made and packaged to the built client.
 audioPreview: 0
 audioPreviewEnd: 1000
 
@@ -27,6 +34,11 @@ bg: base_light
 
 # The game version of the song. Used when filtered by version in the song selection UI.
 version: '1.0'
+
+# Use remote download or not.
+# If `true`, the song's audio and charts will be omitted from built package and put in
+# dist/download directory. You'll need to upload it to a server and download it in built client.
+remote_dl: false
 
 # The chart's metadata for each difficulty.
 difficulties:

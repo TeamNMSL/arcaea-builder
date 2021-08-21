@@ -2,6 +2,32 @@
 
 Each song directory contains a song's all files.
 
+## Use official song
+
+If you want to add an official song (use the official version directly, or with some `filters`) to your project. You don't need to process it. Just write a song metadata with `from`:
+
+```yaml
+# "From" an official song ID
+from: brandnewworld
+# Apply some filters if you want 
+filters:
+  - name: tempoScale
+    factor: 1.25
+# Override some properties of generated matadata
+# Such as adding version info and constants
+version: '2.0'
+difficulties:
+  - constant: 2
+  - constant: 5
+  - constant: 9
+```
+
+Then the song will be fetched automatically from the unpacked data.
+
+If the song is remote downloaded, you also need to put the `dl` directory from the app data to `original` directory.
+
+If the song is not in the package you use (i.e. released in a newer version of Arcaea or Nitendo Switch-only), you can put that version's unpacked `songs` directory to `original` and name it whether you want. e.g. If you name it `newer` (`original/newer/songlist` will contain the official song list) and want to use the song Aegleseeker, just write `from: newer/aegleseeker` in your metadata.
+
 ## Audio
 
 The filename must be `base.ogg`.

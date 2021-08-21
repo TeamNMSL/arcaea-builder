@@ -4,6 +4,7 @@ import readline from "readline";
 import yaml from "js-yaml";
 
 import { ArcSongList } from "@/lib/interfaces";
+import { processOriginalSongMeta } from "@/lib/originalSong";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 async function prompt(message: string): Promise<string> {
@@ -23,34 +24,17 @@ export default async (args: string[]) => {
               : fs.readdirSync(songsDir).filter(id => fs.lstatSync(path.join(songsDir, id)).isDirectory());
 
   for (const song of songs) {
-    const songInfo = songlist.songs.find(s => s.id === song);
-    if (!songInfo) {
+    const originalSongInfo = songlist.songs.find(s => s.id === song);
+    if (!originalSongInfo) {
       logger.error("No such song in songlist: " + song);
       continue;
     }
   
     const constants = (await prompt(`Constants for ${song} (e.g. 1.5 7.5 9.9): `)).split(" ").filter(s => s).map(Number);
-  
-    delete songInfo.id;
-    delete songInfo.set;
-    delete songInfo.purchase;
-    delete songInfo["world_unlock"];
-    delete songInfo["remote_dl"];
-    delete songInfo["songlist_hidden"];
-    for (const d of songInfo.difficulties) {
-      delete d["hidden_until_unlocked"];
-      delete d["jacketOverride"];
-      d.constant = constants[d.ratingClass];
 
-      if (d.rating === 0) d.rating = "?";
-      if (d.ratingPlus) {
-        delete d.ratingPlus;
-        d.rating = String(d.rating) + "+";
-      }
-    }
-
+    const songMeta = processOriginalSongMeta(originalSongInfo, constants);
     const outFile = path.join(songsDir, song, "song.yaml");
-    fs.writeFileSync(outFile, yaml.dump(songInfo));
+    fs.writeFileSync(outFile, yaml.dump(songMeta));
     logger.info(`Written ${outFile}`);
   }
 

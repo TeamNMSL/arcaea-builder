@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Run it in your project's git repo
+# Your project must be in a git repo's root
+# Won't work in [example] of arcaea-builder.
+
+export ARC_PROJECT=$(git rev-parse --show-toplevel)
+SCRIPT_PATH="$(readlink "${BASH_SOURCE[0]}")"
+cd "$(dirname "$SCRIPT_PATH")"
+yarn action "$@"

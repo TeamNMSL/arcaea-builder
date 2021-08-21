@@ -24,13 +24,20 @@ targets:
     - 0x004B982C: HEX 4F F0 01 04 4F F0 01 04 01 24 # SongSelectScene::init()
     # Bundled Beyond difficulty support
     - 0x004BC6E1: HEX E0    # SongSelectScene::getRequiredAssetsAndTokenForStartGameScene():
-                          # remove force download check of Beyond charts (remove download prompt before play)
+                            # remove force download check of Beyond charts (remove download prompt before play)
     - 0x005352BF: HEX E0    # SongManager::loadSongs()
-                          # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
+                            # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
     - 0x00540CA8: HEX 00 BF # Song::getChartFilepathForDifficultyClass()
-                          # remove force find chart file under download directory for Beyond charts
+                            # remove force find chart file under download directory for Beyond charts
     - 0x0057A013: HEX E0    # SongSelectionCell::setSelected()
-                          # remove force download check of Beyond charts (download button to START button)
+                            # remove force download check of Beyond charts (download button to START button)
+    # Download single song for ALL songs (instead of download full pack for non single/extend songs)
+    - 0x004BC27A: HEX 05 E0 # SongSelectScene::promptDownload()
+    - 0x005410AC: HEX 06 E0 # Song::isRemoteDownloadPresent()
+    # Fix error downloading when charts of some difficulties are empty
+    - 0x004A3FEA: HEX 00 BF # Check downloaded data on startup: don't consider empty file's MD5 as non-exist
+    - 0x004A3FFE: HEX 00 BF # Check downloaded data on startup: don't consider file size < 500 bytes as non-exist
+    - 0x0055DBDE: HEX 14 E0 # lambda[at DownloadFileTask::run](): don't fail file size < 500 bytes
     # April Fool's Day's feature for all charts
     - 0x00516C72: HEX 00 BF       # LogicChart::setupNotesFromParsed(): enable camera
     - 0x00516D26: HEX 11 E0       # LogicChart::setupNotesFromParsed(): enable scenecontrol
@@ -110,13 +117,22 @@ targets:
     - 0x0022191C: HEX 1F 20 03 D5 1F 20 03 D5 35 00 80 D2 # SongSelectScene::init()
     # Bundled Beyond difficulty support
     - 0x00226D78: HEX 05 00 00 14 # SongSelectScene::getRequiredAssetsAndTokenForStartGameScene():
-                                # remove force download check of Beyond charts (remove download prompt before play)
+                                  # remove force download check of Beyond charts (remove download prompt before play)
     - 0x002353BC: HEX 19 00 00 14 # SongManager::loadSongs()
-                                # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
+                                  # remove world-unlock assumption for ALL Beyond charts except Tempestissimo
     - 0x000B6120: HEX 44 08 5F 7A # Song::getChartFilepathForDifficultyClass()
-                                # remove force find chart file under download directory for Beyond charts
+                                  # remove force find chart file under download directory for Beyond charts
     - 0x001F7220: HEX 05 00 00 14 # SongSelectionCell::setSelected()
-                                # remove force download check of Beyond charts (download button to START button)
+                                  # remove force download check of Beyond charts (download button to START button)
+    # Download single song for ALL songs (instead of download full pack for non single/extend songs)
+    - 0x00226324: HEX 1F 20 03 D5 # SongSelectScene::promptDownload()
+    - 0x00226344: HEX 36 00 00 14 # SongSelectScene::promptDownload()
+    - 0x000B69C0: HEX 1F 20 03 D5 # Song::isRemoteDownloadPresent()
+    - 0x000B69F4: HEX 19 00 00 14 # Song::isRemoteDownloadPresent()
+    # Fix error downloading when charts of some difficulties are empty
+    - 0x000B2D40: HEX 1F 20 03 D5 # Check downloaded data on startup: don't consider empty file's MD5 as non-exist
+    - 0x000B2D5C: HEX 1F 20 03 D5 # Check downloaded data on startup: don't consider file size < 500 bytes as non-exist
+    - 0x001C5318: HEX 13 00 00 14 # lambda[at DownloadFileTask::run](): don't fail file size < 500 bytes
     # April Fool's Day's feature for all charts
     - 0x000DB5B4: HEX 1F 20 03 D5 # LogicChart::setupNotesFromParsed(): enable camera
     - 0x000DB654: HEX C0 00 00 14 # LogicChart::setupNotesFromParsed(): enable scenecontrol

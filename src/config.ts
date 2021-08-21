@@ -7,6 +7,7 @@ export interface ProjectConfig {
     apktool: string;
     jarsigner: string;
     "7z": string;
+    ffmpeg: string;
   };
   targets: {
     android?: string;

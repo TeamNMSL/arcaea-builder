@@ -20,6 +20,6 @@ yarn action repack
 
 Then it will print the repacked game package's files paths. You can install them to your devices and play.
 
-The `arcsong.db` database file will be written to `dist/`. You can use it with [Arcaea-server](https://github.com/Lost-MSth/Arcaea-server).
+The `arcsong.db` database file and `download` directory (if you used `remote_dl`) will be written to `dist/`. You can use it with [Arcaea-server](https://github.com/Lost-MSth/Arcaea-server).
 
 See [`assets`](assets), [`packs`](packs), [`project.yaml`](project.yaml) and [`binary.yaml`](binary.yaml) for more info.
