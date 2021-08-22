@@ -4,6 +4,10 @@ targets:
   android:
     # Server address
     - 0x0089C89A: EVAL `ASCIIZ ${projectConfig.server}`
+    # Project name
+    # This address is originally an assert message, it's enough for a project name
+    - 0x008ACC70: EVAL `ASCIIZ ${projectConfig.name}`
+    - 0x0051A72C: UINT 32 LE 0x0039277c # = Address above - PC
     # Font fix -- replace references to Chinese font with Japanese font
     # And replace Japanese font with full Chinese font
     - 0x008A078D: ASCIIZ Fonts/Kazesawa-Regular.ttf
@@ -89,6 +93,10 @@ targets:
   ios:
     # Server address
     - 0x007F7649: EVAL `ASCIIZ ${projectConfig.server}`
+    # Project name
+    # This address is originally an assert message, it's enough for a project name
+    - 0x007F369E: EVAL `ASCIIZ ${projectConfig.name}`
+    - 0x00020AA0: HEX 21 78 1A 91 # ADD X0, X0, Page offset of address above
     # Font fix -- replace references to Chinese font with Japanese font
     # And replace Japanese font with full Chinese font
     - 0x007F4090: ASCIIZ Fonts/Kazesawa-Regular.ttf
