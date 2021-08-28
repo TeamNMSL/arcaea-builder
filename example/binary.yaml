@@ -3,11 +3,13 @@
 targets:
   android:
     # Server address
-    - 0x0089C89A: EVAL `ASCIIZ ${projectConfig.server}`
+    # This address is originally an assert message, it's enough for a server address
+    - 0x008AD348: EVAL `ASCIIZ ${projectConfig.server}`
+    - 0x003C5EB8: UINT 32 LE 0x004E7500 # = Address above - PC
     # Project name
     # This address is originally an assert message, it's enough for a project name
     - 0x008ACC70: EVAL `ASCIIZ ${projectConfig.name}`
-    - 0x0051A72C: UINT 32 LE 0x0039277c # = Address above - PC
+    - 0x0051A72C: UINT 32 LE 0x0039277C # = Address above - PC
     # Font fix -- replace references to Chinese font with Japanese font
     # And replace Japanese font with full Chinese font
     - 0x008A078D: ASCIIZ Fonts/Kazesawa-Regular.ttf
@@ -90,13 +92,51 @@ targets:
     - 0x0054E0F8: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::insertOrUpdateChallengeUnlock()
     - 0x0054DED4: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
     - 0x0054E020: HEX 00 BF 00 BF # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
+    # Enable UI of Dynamix pack for all song with "dynamix" background
+    # - string_includes_charp()
+    #   - 0x004979C4 PUSH {R3, R4, LR}
+    #   - 0x004979C6 MOVS R2, 0
+    #   - 0x004979C8 BL string_find_charp
+    #   - 0x004979CC ADDS R0, 1
+    #   - 0x004979CE CMP R0, 0
+    #   - 0x004979D0 IT NE
+    #   - 0x004979D2 MOVS R0, 1
+    #   - 0x004979D4 POP {R3, R4, PC}
+    - 0x004979C4: HEX 18 B5 00 22 F1 F7 B4 FE 01 30 00 28 18 BF 01 20 18 BD
+    # - current_song_bg()
+    #   - 0x00497FCE PUSH {R0, LR}
+    #   - 0x00497FD0 LDR R0, offset: [&CoreManager::singleton    ] - [PC at "ADD R0, PC"]
+    #   - 0x00497FD2 LDR R1, offset: [&CoreManager::currentSongId] - [PC at "LDR R0, [R0]"]
+    #   - 0x00497FD4 ADD R0, PC
+    #   - 0x00497FD6 ADD R1, PC
+    #   - 0x00497FD8 LDR R0, [R0]     (CoreManager::singleton)
+    #   - 0x00497FDA LDR R0, [R0, 16] (CoreManager::singleton->songManager)
+    #   - 0x00497FDC BLX SongManager::getSongForId()
+    #   - 0x00497FE0 ADD.W R1, R0, 60 (song->bg)
+    #   - 0x00497FE4 POP.W {R0, LR}
+    #   - 0x00497FE8 PUSH {R0, LR}
+    #   - 0x00497FEA BLX string_from_string
+    #   - 0x00497FEE POP.W {R0, PC}
+    #   - 0x00497FF2 .WORD 00 00 (padding for LDR above)
+    #   - 0x00497FF4 .DWORD [&CoreManager::singleton    ] - [PC at "ADD R0, PC"]
+    #   - 0x00497FF8 .DWORD [&CoreManager::currentSongId] - [PC at "LDR R0, [R0]"]
+    - 0x00497FCE: HEX 01 B5 08 48 09 49 78 44 79 44 00 68 00 69 EE F6 B8 EC 00 F1 3C 01 BD E8 01 40 01 B5 ED F6 F4 EB BD E8 01 80 00 00 9C 4F 4F 00 A2 4F 4F 00
+    - 0x00554032: HEX 3C 30       # TrackBase::init(): var S: song->set to song->bg
+    - 0x005542AA: HEX 43 F7 8B FB # TrackBase::init(): std::string::find() 1st argument: song->id to S
+    - 0x004B7630: HEX E0 F7 CD FC # UILayer::init(): CoreManager::getCurrentSetId() to current_song_bg()
+    - 0x004B763A: HEX E0 F7 C3 F9 # UILayer::init(): string_eq_charp() to string_includes_charp()
+    - 0x004B7670: HEX E0 F7 AD FC # UILayer::init(): CoreManager::getCurrentSetId() to current_song_bg()
+    - 0x004B767A: HEX E0 F7 A3 F9 # UILayer::init(): string_eq_charp() to string_includes_charp()
   ios:
     # Server address
-    - 0x007F7649: EVAL `ASCIIZ ${projectConfig.server}`
+    # This address is originally an assert message, it's enough for a server address
+    - 0x007F363E: EVAL `ASCIIZ ${projectConfig.server}`
+    - 0x0009E8B0: HEX A1 3A 00 B0 # ADRP X0, page of address above
+    - 0x0009E8B4: HEX 21 F8 18 91 # ADD X0, X0, page offset of address above
     # Project name
     # This address is originally an assert message, it's enough for a project name
     - 0x007F369E: EVAL `ASCIIZ ${projectConfig.name}`
-    - 0x00020AA0: HEX 21 78 1A 91 # ADD X0, X0, Page offset of address above
+    - 0x00020AA0: HEX 21 78 1A 91 # ADD X0, X0, page offset of address above
     # Font fix -- replace references to Chinese font with Japanese font
     # And replace Japanese font with full Chinese font
     - 0x007F4090: ASCIIZ Fonts/Kazesawa-Regular.ttf
@@ -148,7 +188,8 @@ targets:
     - 0x000DE044: HEX 05 00 00 14 # LogicChart::colorForId(): enable green arc()
     - 0x000DE068: HEX 1F 20 03 D5 # LogicChart::colorForId(): fix green arc() with mirror
     # Assume everything to be purchased
-    - 0x0021CA60: HEX 20 # PurchaseManager::isPurchased(): return 1 on not purchased
+    - 0x0021C7B0: HEX 20 00 80 52 # PurchaseManager::isPurchased()+0: MOV W0, 1
+    - 0x0021C7B4: HEX C0 03 5F D6 # PurchaseManager::isPurchased()+4: RET
     # Assume ALL stories to be unlocked
     - 0x0005C3D8: HEX 1F 20 03 D5 18 00 00 14 # StoryEntry::isUnlocked(): jump to return
     - 0x0005C43C: HEX 33 00 80 52             # StoryEntry::isUnlocked(): return 1
@@ -180,3 +221,53 @@ targets:
     - 0x000FAC6C: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::insertOrUpdateChallengeUnlock()
     - 0x000FA8F8: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
     - 0x000FAA1C: HEX 1F 20 03 D5 # <AnomalySongFinished>(): call to UnlockManager::saveUnlockStates()
+    # Enable UI of Dynamix pack for all song with "dynamix" background
+    # - string_includes_charp()
+    #   - 0x0021C7B8 LDRB W9, [X0, #23]   (short::size)
+    #   - 0x0021C7BC AND W9, W9, #0x80    (short_mask)
+    #   - 0x0021C7C0 LDR X10, [X0]        (long::data)
+    #   - 0x0021C7C4 CMP W9, #0
+    #   - 0x0021C7C8 CSEL X0, X10, X0, NE (resolve data pointer with SSO)
+    #   - 0x0021C7CC SUB SP, SP, 16
+    #   - 0x0021C7D0 STR X30, [SP, 8]     (save LR)
+    #   - 0x0021C7D4 BL _strstr
+    #   - 0x0021C7D8 MOV W9, #1
+    #   - 0x0021C7DC CMP W0, #0
+    #   - 0x0021C7E0 CSEL X0, X0, X9, EQ  (return 1 on strstr() non-zero)
+    #   - 0x0021C7E4 LDR X30, [SP, 8]     (restore LR)
+    #   - 0x0021C7E8 ADD SP, SP, 16
+    #   - 0x0021C7EC RET
+    - 0x0021C7B8: HEX 09 5C 40 39 29 01 19 12 0A 00 40 F9 3F 01 00 71 40 11 80 9A FF 43 00 D1 FE 07 00 F9 CC 82 14 94 29 00 80 52 1F 00 00 71 00 00 89 9A FE 07 40 F9 FF 43 00 91 C0 03 5F D6
+    # - current_song_bg()
+    #   - 0x0021C7F0 SUB SP, SP, 16
+    #   - 0x0021C7F4 STR X0, [SP, 0]         (save arg1 &result)
+    #   - 0x0021C7F8 STR X30, [SP, 8]        (save lr)
+    #   - 0x0021C7FC ADRP X0, page start     (Load &CoreManager::singleton)
+    #   - 0x0021C800 ADD X0, X0, page offset (Load &CoreManager::singleton)
+    #   - 0x0021C804 ADD X1, X0, 16          (&currentSongId = &singleton + 16)
+    #   - 0x0021C808 LDR X0, [X0]            (dereference singleton)
+    #   - 0x0021C80C ADD X0, X0, 32          (&singleton->songManager = singleton + 32)
+    #   - 0x0021C810 LDR X0, [X0]            (dereference singleton->songManager)
+    #   - 0x0021C814 BL getSongForId
+    #   - 0x0021C818 ADD X1, X0, 120         (song->bg)
+    #   - 0x0021C81C LDR X0, [SP, 0]         (restore &result)
+    #   - 0x0021C820 BL string_from_string
+    #   - 0x0021C824 LDR X30, [SP, 8]        (restore LR)
+    #   - 0x0021C828 ADD SP, SP, #0x10
+    #   - 0x0021C82C RET
+    - 0x0021C7F0: HEX FF 43 00 D1 E0 03 00 F9 FE 07 00 F9 80 49 00 F0 00 00 0F 91 01 40 00 91 00 00 40 F9 00 80 00 91 00 00 40 F9 77 6C 00 94 01 E0 01 91 E0 03 40 F9 AD 7C 14 94 FE 07 40 F9 FF 43 00 91 C0 03 5F D6
+    - 0x001D54A4: HEX 29 E1 01 91 # TrackBase::init(): song->set to song->bg
+    - 0x001D5864: HEX 1F 20 03 D5 # TrackBase::init(): NOP strlen(song->bg) != strlen("dynamix")
+    - 0x001D587C: HEX E1 03 03 AA # TrackBase::init(): "dynamix" on arg4 to arg1
+    - 0x001D5880: HEX CE 1B 01 94 # TrackBase::init(): string_compare_charp to string_includes_charp
+    - 0x001D5884: HEX 00 09 00 35 # TrackBase::init(): (string_compare_charp() == 0) to (string_includes_charp() != 0)
+    - 0x0020ED4C: HEX A9 36 00 94 # UILayer::init(): CoreManager::getCurrentSetId() to current_song_bg()
+    - 0x0020ED68: HEX 1F 20 03 D5 # UILayer::init(): NOP strlen(bg) != strlen("dynamix")
+    - 0x0020ED80: HEX E1 03 03 AA # UILayer::init(): "dynamix" on arg4 to arg1
+    - 0x0020ED84: HEX 8D 36 00 94 # UILayer::init(): string_compare_charp to string_includes_charp
+    - 0x0020ED88: HEX C0 43 00 35 # UILayer::init(): (string_compare_charp() == 0) to (string_includes_charp() != 0)
+    - 0x0020EDC8: HEX 8A 36 00 94 # UILayer::init(): CoreManager::getCurrentSetId() to current_song_bg()
+    - 0x0020EDE4: HEX 1F 20 03 D5 # UILayer::init(): NOP strlen(bg) != strlen("dynamix")
+    - 0x0020EDFC: HEX E1 03 03 AA # UILayer::init(): "dynamix" on arg4 to arg1
+    - 0x0020EE00: HEX 6E 36 00 94 # UILayer::init(): string_compare_charp to string_includes_charp
+    - 0x0020EE04: HEX C0 40 00 35 # UILayer::init(): (string_compare_charp() == 0) to (string_includes_charp() != 0)
